@@ -1,11 +1,14 @@
-"""Constantes nécessaires à l'application"""
+"""Constants required for application"""
+
+author = "F5703SWL - Olivier"
+version = "2025.16.5"
 
 # Web-888 Public Device List (Refresh every 15 minutes)
 WEB888_JSON_URL = (
     "https://www.rx-888.com/api/devices"
 )
 
-# Dictionnaire associant les URL à leurs types de données et à leurs filtres
+# Dictionary associating URLs with their data types and filters
 data_sources = {
     "web888": {
         "data_type": "json",

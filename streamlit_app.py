@@ -1,42 +1,58 @@
-import streamlit as st
+import gettext
 import json
+from datetime import datetime, timezone
+
+import pytz
 import requests
+import streamlit as st
 
 import constants
 
 
-# Fonction pour charger les données CSV
+# Function to load CSV data
 def load_csv(url, filters):
     return pd.read_csv(url)
 
 
-# Fonction pour charger les données JSON
+# Function to load JSON data
 def load_json(url, filters):
     response = requests.get(url)
     return json.loads(response.text)
 
 
-# Dictionnaire des fonctions de chargement
-loading_functions = {
-    "csv": load_csv,
-    "json": load_json,
-}
-
-
-# Fonction pour charger les données avec mise en cache
+# Function to load data with caching
 def load_data(url, data_type, load=False, filters=None):
     if load:
         try:
             return loading_functions[data_type](url, filters)
         except KeyError:
-            raise ValueError(f"Type de données non pris en charge : {data_type}")
+            raise ValueError(f"Unsupported data type: {data_type}")
     else:
         return None
 
 
-# Application principale
-st.title("📻 SWL Web SDR")
+# Configuration for gettext
+def setup_i18n(lang):
+    localedir = "locales"  # Folder containing translations
+    translation = gettext.translation(
+        "messages", localedir, languages=[lang], fallback=True
+    )
+    translation.install()
+    return translation.gettext
 
+
+# Dictionary of loading functions
+loading_functions = {
+    "csv": load_csv,
+    "json": load_json,
+}
+
+#
+tz = st.context.timezone
+tz_obj = pytz.timezone(tz)
+now = datetime.now(timezone.utc)
+
+# Load the data sources from constants
 data = {
     name: load_data(
         params["url"], params["data_type"], params.get("load"), params.get("filters")
@@ -44,40 +60,68 @@ data = {
     for name, params in constants.data_sources.items()
 }
 
+# Retrieve the user's browser language
+user_locale = st.context.locale  # For example, "fr-FR" or "en-US"
+
+# Extract the primary language (e.g., "fr" or "en")
+lang = user_locale.split("-")[0]  # Take the first part before the hyphen
+
+# Translation setup
+_ = setup_i18n(lang)  # _ is the convention for the translation function
+
+# Main application
+
+# Set the page configuration
+st.set_page_config(layout="wide")
+
+# Sidebar
 with st.sidebar:
 
-    st.warning(
+    st.info(
+        _(
+            """The application is evolving...
+        Expect exciting new features very soon!
         """
-        L'application est en pleine évolution...
-        Attendez-vous à de passionnantes nouveautés très prochainement !
-        """,
-        icon="⚠️",
+        ),
+        icon="ℹ️",
     )
 
-st.header("Liste des WebSDR publiques actifs")
+    st.caption(
+        _(
+            """Language: {lang}  
+        Locale: {user_locale}  
+        Time: {now_local}  
+        Timezone: {tz}  
+        UTC time: {now_utc}
+        """
+        ).format(
+            lang=lang,
+            user_locale=user_locale,
+            now_local=now.astimezone(tz_obj),
+            tz=tz,
+            now_utc=now,
+        )
+    )
+
+# Page content
+st.title(_("📻 SWL Web SDR"))
+
+st.header(_("List of Active Public WebSDRs"))
 
 st.json(data, expanded=False)
 
-# if data:
-#     for source, devices in data.items():
-#         st.subheader(f"Source: {source}")
-#         for device in devices.get("devices", []):
-#             st.write(f"**Nom :** {device.get('name', 'Inconnu')}")
-#             st.write(f"**URL :** {device.get('url', 'Non spécifiée')}")
-#             st.write(f"**Statut :** {device.get('status', 'Non spécifié')}")
-#             st.write("---")
-
-st.subheader("A propos de l'application", divider=True)
+st.subheader(_("About the Application"), divider=True)
 
 st.markdown(
+    _(
+        """This application displays **public data from active WebSDRs**
+    using different APIs and data sources.
     """
-    Cette application permet d'afficher les **données publiques des WebSDR
-    publiques** à partir de différentes API et sources de données .
-    """
+    )
 )
 
 st.caption(
-    """Auteur : F5703SWL - Olivier ([GitHub](https://github.com/orx57)
-    & [LinkedIn](https://www.linkedin.com/in/orx57)) · Avril 2025
-    """
+    _("Author: {author} · Version: {version}").format(
+        author=constants.author, version=constants.version
+    )
 )

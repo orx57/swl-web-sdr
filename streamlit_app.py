@@ -47,7 +47,16 @@ loading_functions = {
     "json": load_json,
 }
 
-#
+# Retrieve the user's browser language
+user_locale = st.context.locale  # For example, "fr-FR" or "en-US"
+
+# Extract the primary language (e.g., "fr" or "en")
+lang = user_locale.split("-")[0]  # Take the first part before the hyphen
+
+# Translation setup
+_ = setup_i18n(lang)  # _ is the convention for the translation function
+
+# Get time and user timezone
 tz = st.context.timezone
 tz_obj = pytz.timezone(tz)
 now = datetime.now(timezone.utc)
@@ -60,15 +69,6 @@ data = {
     for name, params in constants.data_sources.items()
 }
 
-# Retrieve the user's browser language
-user_locale = st.context.locale  # For example, "fr-FR" or "en-US"
-
-# Extract the primary language (e.g., "fr" or "en")
-lang = user_locale.split("-")[0]  # Take the first part before the hyphen
-
-# Translation setup
-_ = setup_i18n(lang)  # _ is the convention for the translation function
-
 # Main application
 
 # Set the page configuration
@@ -77,6 +77,7 @@ st.set_page_config(layout="wide")
 # Sidebar
 with st.sidebar:
 
+    # Author information message
     st.info(
         _(
             """The application is evolving...
@@ -86,6 +87,7 @@ with st.sidebar:
         icon="ℹ️",
     )
 
+    # User context information
     st.caption(
         _(
             """Language: {lang}  
@@ -108,8 +110,45 @@ st.title(_("📻 SWL Web SDR"))
 
 st.header(_("List of Active Public WebSDRs"))
 
-st.json(data, expanded=False)
+# st.json(data, expanded=False)
 
+# Display metrics for the number of SDRs and users
+active_sdr, active_user, total_sdr = st.columns(3)
+active_sdr.metric(
+    _("Active SDRs"),
+    sum(1 for device in data["web888"]["devices"] if device.get("status") == "active"),
+    border=True,
+)
+active_user.metric(
+    _("Active Users"),
+    sum(
+        int(device.get("users", 0))
+        for device in data["web888"]["devices"]
+        if device.get("status") == "active"
+    ),
+    border=True,
+)
+total_sdr.metric(_("Total SDRs"), len(data["web888"]["devices"]), border=True)
+
+# Display the list of SDRs
+st.dataframe(
+    data["web888"]["devices"],
+    column_config={
+        "url": st.column_config.LinkColumn(_("URL")),
+        "uptime": _("Uptime"),
+        "name": _("Name"),
+        "snr": _("SNR"),
+        "users": _("Users"),
+        "max_users": _("Max Users"),
+        "antenna": _("Antenna"),
+        "status": _("Status"),
+        "bands": _("Bands"),
+        "gps": _("GPS"),
+    },
+    hide_index=True,
+)
+
+# Page footer
 st.subheader(_("About the Application"), divider=True)
 
 st.markdown(

@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2025-04-18 12:04+0000\n"
+"POT-Creation-Date: 2025-04-18 13:15+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,7 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: streamlit_app.py:81
+#: streamlit_app.py:82
 msgid ""
 "The application is evolving...\n"
 "        Expect exciting new features very soon!\n"
@@ -25,7 +25,7 @@ msgstr ""
 "        Expect exciting new features very soon!\n"
 "        "
 
-#: streamlit_app.py:90
+#: streamlit_app.py:92
 msgid ""
 "Language: {lang}  \n"
 "        Locale: {user_locale}  \n"
@@ -41,19 +41,71 @@ msgstr ""
 "        UTC time: {now_utc}\n"
 "        "
 
-#: streamlit_app.py:107
+#: streamlit_app.py:109
 msgid "📻 SWL Web SDR"
 msgstr "📻 SWL Web SDR"
 
-#: streamlit_app.py:109
+#: streamlit_app.py:111
 msgid "List of Active Public WebSDRs"
 msgstr "List of Active Public WebSDRs"
 
-#: streamlit_app.py:113
+#: streamlit_app.py:118
+msgid "Active SDRs"
+msgstr "Active SDRs"
+
+#: streamlit_app.py:123
+msgid "Active Users"
+msgstr "Active Users"
+
+#: streamlit_app.py:131
+msgid "Total SDRs"
+msgstr "Total SDRs"
+
+#: streamlit_app.py:137
+msgid "URL"
+msgstr "URL"
+
+#: streamlit_app.py:138
+msgid "Uptime"
+msgstr "Uptime"
+
+#: streamlit_app.py:139
+msgid "Name"
+msgstr "Name"
+
+#: streamlit_app.py:140
+msgid "SNR"
+msgstr "SNR"
+
+#: streamlit_app.py:141
+msgid "Users"
+msgstr "Users"
+
+#: streamlit_app.py:142
+msgid "Max Users"
+msgstr "Max Users"
+
+#: streamlit_app.py:143
+msgid "Antenna"
+msgstr "Antenna"
+
+#: streamlit_app.py:144
+msgid "Status"
+msgstr "Status"
+
+#: streamlit_app.py:145
+msgid "Bands"
+msgstr "Bands"
+
+#: streamlit_app.py:146
+msgid "GPS"
+msgstr "GPS"
+
+#: streamlit_app.py:152
 msgid "About the Application"
 msgstr "About the Application"
 
-#: streamlit_app.py:116
+#: streamlit_app.py:155
 msgid ""
 "This application displays **public data from active WebSDRs**\n"
 "    using different APIs and data sources.\n"
@@ -63,6 +115,6 @@ msgstr ""
 "    using different APIs and data sources.\n"
 "    "
 
-#: streamlit_app.py:124
+#: streamlit_app.py:163
 msgid "Author: {author} · Version: {version}"
 msgstr "Author: {author} · Version: {version}"

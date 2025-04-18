@@ -134,17 +134,30 @@ total_sdr.metric(_("Total SDRs"), len(data["web888"]["devices"]), border=True)
 st.dataframe(
     data["web888"]["devices"],
     column_config={
-        "url": st.column_config.LinkColumn(_("URL")),
-        "uptime": _("Uptime"),
+        "url": st.column_config.LinkColumn(
+            _("URL"),
+            display_text=r".*://(.*:\d+)",
+        ),
+        "uptime": st.column_config.NumberColumn(
+            _("Uptime"),
+            help=_("Uptime in seconds"),
+        ),
         "name": _("Name"),
         "snr": _("SNR"),
-        "users": _("Users"),
-        "max_users": _("Max Users"),
+        "users": st.column_config.NumberColumn(
+            _("Users"),
+            help=_("Number of active users"),
+        ),
+        "max_users": st.column_config.NumberColumn(
+            _("Max Users"),
+            help=_("Number of maximum users"),
+        ),
         "antenna": _("Antenna"),
-        "status": _("Status"),
+        "status": None,
         "bands": _("Bands"),
         "gps": _("GPS"),
     },
+    column_order=("url", "name", "antenna", "snr", "users", "max_users", "uptime", "status", "bands", "gps"),
     hide_index=True,
 )
 

@@ -158,14 +158,15 @@ active_sdr, active_user, total_sdr = st.columns(3)
 # Obtenir tous les appareils
 combined_devices = aggregate_devices(data)
 
-# Calcul des métriques
-total_active = sum(1 for device in combined_devices if device.get("status") == "active")
-total_users = sum(
-    int(device.get("users", 0))
-    for device in combined_devices
-    if device.get("status") == "active"
-)
-total_sdrs = len(combined_devices)
+# Filtrer les appareils actifs
+active_devices = [
+    device for device in combined_devices if device.get("status") == "active"
+]
+
+# Calcul des métriques sur les appareils actifs uniquement
+total_active = len(active_devices)
+total_users = sum(int(device.get("users", 0)) for device in active_devices)
+total_sdrs = len(combined_devices)  # Garde le total de tous les appareils
 
 active_sdr.metric(
     _("Active SDRs"),
@@ -181,7 +182,7 @@ total_sdr.metric(_("Total SDRs"), total_sdrs, border=True)
 
 # Display the list of SDRs
 st.dataframe(
-    combined_devices,
+    active_devices,
     column_config={
         "url": st.column_config.LinkColumn(
             _("URL"),
@@ -192,6 +193,10 @@ st.dataframe(
             help=_("Uptime in seconds"),
         ),
         "name": _("Name"),
+        "source": st.column_config.TextColumn(
+            _("Source"),
+            help=_("Data source origin"),
+        ),
         "snr": st.column_config.NumberColumn(
             _("SNR"),
             help=_("Signal-to-Noise Ratio"),
@@ -209,10 +214,6 @@ st.dataframe(
         "status": None,
         "bands": _("Bands"),
         "gps": _("GPS"),
-        "source": st.column_config.TextColumn(
-            _("Source"),
-            help=_("Data source origin"),
-        ),
     },
     column_order=(
         "url",

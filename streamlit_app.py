@@ -17,7 +17,16 @@ def load_csv(url, filters):
 # Function to load JSON data
 def load_json(url, filters):
     response = requests.get(url)
-    return json.loads(response.text)
+    data = json.loads(response.text)
+
+    # Reformat SNR values
+    if "devices" in data:
+        for device in data["devices"]:
+            if "snr" in device:
+                # Replace the comma by dot in SNR value
+                device["snr"] = float(device["snr"].replace(",", "."))
+
+    return data
 
 
 # Function to load data with caching
@@ -39,6 +48,20 @@ def setup_i18n(lang):
     )
     translation.install()
     return translation.gettext
+
+
+# Agrégation générique des données de toutes les sources
+def aggregate_devices(data_sources):
+    all_devices = []
+    for source_name, source_data in data_sources.items():
+        if source_data and "devices" in source_data:
+            devices = source_data["devices"]
+            # Utiliser le nom défini dans constants.py plutôt que la clé
+            source_display_name = constants.data_sources[source_name]["name"]
+            for device in devices:
+                device["source"] = source_display_name
+            all_devices.extend(devices)
+    return all_devices
 
 
 # Dictionary of loading functions
@@ -114,25 +137,34 @@ st.header(_("List of Active Public WebSDRs"))
 
 # Display metrics for the number of SDRs and users
 active_sdr, active_user, total_sdr = st.columns(3)
+
+# Obtenir tous les appareils
+combined_devices = aggregate_devices(data)
+
+# Calcul des métriques
+total_active = sum(1 for device in combined_devices if device.get("status") == "active")
+total_users = sum(
+    int(device.get("users", 0))
+    for device in combined_devices
+    if device.get("status") == "active"
+)
+total_sdrs = len(combined_devices)
+
 active_sdr.metric(
     _("Active SDRs"),
-    sum(1 for device in data["web888"]["devices"] if device.get("status") == "active"),
+    total_active,
     border=True,
 )
 active_user.metric(
     _("Active Users"),
-    sum(
-        int(device.get("users", 0))
-        for device in data["web888"]["devices"]
-        if device.get("status") == "active"
-    ),
+    total_users,
     border=True,
 )
-total_sdr.metric(_("Total SDRs"), len(data["web888"]["devices"]), border=True)
+total_sdr.metric(_("Total SDRs"), total_sdrs, border=True)
 
 # Display the list of SDRs
 st.dataframe(
-    data["web888"]["devices"],
+    combined_devices,
     column_config={
         "url": st.column_config.LinkColumn(
             _("URL"),
@@ -143,7 +175,11 @@ st.dataframe(
             help=_("Uptime in seconds"),
         ),
         "name": _("Name"),
-        "snr": _("SNR"),
+        "snr": st.column_config.NumberColumn(
+            _("SNR"),
+            help=_("Signal-to-Noise Ratio"),
+            format="%.2f",
+        ),
         "users": st.column_config.NumberColumn(
             _("Users"),
             help=_("Number of active users"),
@@ -156,8 +192,24 @@ st.dataframe(
         "status": None,
         "bands": _("Bands"),
         "gps": _("GPS"),
+        "source": st.column_config.TextColumn(
+            _("Source"),
+            help=_("Data source origin"),
+        ),
     },
-    column_order=("url", "name", "antenna", "snr", "users", "max_users", "uptime", "status", "bands", "gps"),
+    column_order=(
+        "url",
+        "name",
+        "antenna",
+        "source",
+        "snr",
+        "users",
+        "max_users",
+        "uptime",
+        "status",
+        "bands",
+        "gps",
+    ),
     hide_index=True,
 )
 

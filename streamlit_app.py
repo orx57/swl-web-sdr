@@ -50,12 +50,29 @@ def setup_i18n(lang):
     return translation.gettext
 
 
+# Function to deduplicate devices
+def deduplicate_devices(devices):
+    """Remove duplicate devices based on URL"""
+    unique_devices = {}
+    for device in devices:
+        url = device.get("url")
+        if url:
+            # Keep only the first occurrence or update if better status
+            if url not in unique_devices or (
+                device.get("status") == "active"
+                and unique_devices[url].get("status") != "active"
+            ):
+                unique_devices[url] = device
+    return list(unique_devices.values())
+
+
 # Agrégation générique des données de toutes les sources
 def aggregate_devices(data_sources):
     all_devices = []
     for source_name, source_data in data_sources.items():
         if source_data and "devices" in source_data:
-            devices = source_data["devices"]
+            # Dédupliquer les appareils de cette source
+            devices = deduplicate_devices(source_data["devices"])
             # Utiliser le nom défini dans constants.py plutôt que la clé
             source_display_name = constants.data_sources[source_name]["name"]
             for device in devices:

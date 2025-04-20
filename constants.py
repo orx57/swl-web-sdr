@@ -1,7 +1,7 @@
 """Constants required for application"""
 
 author = "F5703SWL - Olivier"
-version = "2025.16.5"
+version = "2025.16.7"
 
 # KiwiSDR Public Device List (Refresh every 15 minutes)
 KIWISDR_JSON_URL = (

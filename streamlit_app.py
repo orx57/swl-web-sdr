@@ -5,6 +5,7 @@ from datetime import datetime, timezone
 import pytz
 import requests
 import streamlit as st
+from vgrid.utils import maidenhead
 
 import constants
 
@@ -66,6 +67,53 @@ def deduplicate_devices(devices):
     return list(unique_devices.values())
 
 
+def get_grid_locator(gps_data):
+    """Convert GPS coordinates to Maidenhead Grid Locator and get grid center"""
+    if not gps_data:
+        return None
+    try:
+        # Si c'est une string, on essaie plusieurs formats
+        if isinstance(gps_data, str):
+            # Nettoyer la chaîne des parenthèses et espaces
+            clean_coords = gps_data.strip("() ").replace(" ", "")
+            # Format "(lat, lon)" ou "lat,lon"
+            lat, lon = map(float, clean_coords.split(","))
+        # Si c'est déjà un dict/list avec lat/lon
+        elif isinstance(gps_data, (dict, list)):
+            if isinstance(gps_data, dict):
+                lat = float(gps_data.get("lat", gps_data.get("latitude")))
+                lon = float(gps_data.get("lon", gps_data.get("longitude")))
+            else:
+                lat, lon = map(float, gps_data[:2])
+
+        # Obtenir le code Maidenhead et les coordonnées du centre
+        grid_code = maidenhead.toMaiden(lat, lon, 3)
+        grid_center = maidenhead.maidenGrid(grid_code)
+        return grid_code
+
+    except Exception:
+        return None
+
+
+def format_gps(gps_str):
+    """Format GPS coordinates in a human readable format: 48.8567°N, 2.3508°E"""
+    if not gps_str:
+        return None
+    try:
+        # Nettoyer la chaîne des parenthèses et espaces
+        clean_coords = gps_str.strip("() ").replace(" ", "")
+        lat, lon = map(float, clean_coords.split(","))
+
+        # Déterminer les directions
+        lat_dir = "N" if lat >= 0 else "S"
+        lon_dir = "E" if lon >= 0 else "W"
+
+        # Formater avec 4 décimales et les directions
+        return f"{abs(lat):.4f}°{lat_dir}, {abs(lon):.4f}°{lon_dir}"
+    except Exception:
+        return gps_str
+
+
 # Agrégation générique des données de toutes les sources
 def aggregate_devices(data_sources):
     all_devices = []
@@ -77,6 +125,11 @@ def aggregate_devices(data_sources):
             source_display_name = constants.data_sources[source_name]["name"]
             for device in devices:
                 device["source"] = source_display_name
+                # Calculer le grid locator avant de formater les GPS
+                device["grid"] = get_grid_locator(device.get("gps"))
+                # Formater les coordonnées GPS après
+                if device.get("gps"):
+                    device["gps"] = format_gps(device["gps"])
             all_devices.extend(devices)
     return all_devices
 
@@ -213,7 +266,14 @@ st.dataframe(
         "antenna": _("Antenna"),
         "status": None,
         "bands": _("Bands"),
-        "gps": _("GPS"),
+        "gps": st.column_config.TextColumn(
+            _("GPS"),
+            help=_("GPS coordinates"),
+        ),
+        "grid": st.column_config.TextColumn(
+            _("Grid"),
+            help=_("Maidenhead Grid Locator"),
+        ),
     },
     column_order=(
         "url",
@@ -227,6 +287,7 @@ st.dataframe(
         "status",
         "bands",
         "gps",
+        "grid",
     ),
     hide_index=True,
 )

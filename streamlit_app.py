@@ -2,6 +2,7 @@ import gettext
 import json
 from datetime import datetime, timezone
 
+import pandas as pd
 import pytz
 import requests
 import streamlit as st
@@ -86,9 +87,8 @@ def get_grid_locator(gps_data):
             else:
                 lat, lon = map(float, gps_data[:2])
 
-        # Get Maidenhead code and center coordinates
+        # Get Maidenhead code
         grid_code = maidenhead.toMaiden(lat, lon, 3)
-        grid_center = maidenhead.maidenGrid(grid_code)
         return grid_code
 
     except Exception:

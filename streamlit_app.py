@@ -113,11 +113,11 @@ def get_grid_locator(gps_data):
 
 @st.cache_data(persist=True, show_spinner=_("Loading geocoding data..."))
 def get_country_from_gps(gps_data):
-    """Get country from GPS coordinates using reverse_geocoder with Streamlit persistent cache"""
+    """Get location details from GPS coordinates using reverse_geocoder with Streamlit persistent cache"""
     if not gps_data:
         return None
     try:
-        # Parse coordinates
+        # Parse coordinates comme avant
         if isinstance(gps_data, str):
             clean_coords = gps_data.strip("() ").replace(" ", "")
             lat, lon = map(float, clean_coords.split(","))
@@ -128,10 +128,16 @@ def get_country_from_gps(gps_data):
             else:
                 lat, lon = map(float, gps_data[:2])
 
-        # Utilise reverse_geocoder avec les coordonnées arrondies
-        result = rg.search((round(lat, 4), round(lon, 4)))
+        # Utilise reverse_geocoder avec les coordonnées exactes
+        result = rg.search((lat, lon))
         if result and len(result) > 0:
-            return result[0].get("cc", "").upper()
+            location = result[0]
+            return {
+                "country_code": location.get("cc", "").upper(),
+                "city": location.get("name", ""),
+                "region": location.get("admin1", ""),
+                "district": location.get("admin2", ""),  # département, county, etc.
+            }
 
     except Exception as e:
         st.error(_("Geocoding error: {error}").format(error=str(e)))
@@ -166,15 +172,16 @@ def aggregate_devices(data_sources):
     all_devices = []
     for source_name, source_data in data_sources.items():
         if source_data and "devices" in source_data:
-            # Deduplicate devices from this source
             devices = deduplicate_devices(source_data["devices"])
-            # Use the name defined in constants.py instead of the key
             source_display_name = constants.data_sources[source_name]["name"]
             for device in devices:
                 device["source"] = source_display_name
-                # Calculate grid locator and country before formatting GPS
                 device["grid"] = get_grid_locator(device.get("gps"))
-                device["country"] = get_country_from_gps(device.get("gps"))
+
+                # Récupération des infos de géolocalisation enrichies
+                location = get_country_from_gps(device.get("gps"))
+                if location:
+                    device.update(location)
 
                 # Calcul du ratio d'utilisation
                 users = float(device.get("users", 0))
@@ -372,9 +379,21 @@ st.dataframe(
             _("Grid"),
             help=_("Maidenhead Grid Locator"),
         ),
-        "country": st.column_config.TextColumn(
-            _("Country"),
-            help=_("Country code"),
+        "country_code": st.column_config.TextColumn(
+            _("Country Code"),
+            help=_("Country code (ISO)"),
+        ),
+        "city": st.column_config.TextColumn(
+            _("City"),
+            help=_("City name"),
+        ),
+        "region": st.column_config.TextColumn(
+            _("Region"),
+            help=_("State/Region/Province"),
+        ),
+        "district": st.column_config.TextColumn(
+            _("District"),
+            help=_("District/Department/County"),
         ),
         "gps": st.column_config.TextColumn(
             _("GPS"),
@@ -396,7 +415,10 @@ st.dataframe(
         "snr",
         "uptime",
         # Localisation
-        "country",
+        "country_code",
+        "city",
+        "region",
+        "district",
         "grid",
         "gps",
         # Champ caché

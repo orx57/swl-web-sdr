@@ -97,28 +97,6 @@ def get_grid_locator(gps_data):
         return None
 
 
-# Persistent cache definition
-CACHE_FILE = Path("geocode_cache.json")
-
-
-def load_geocode_cache():
-    """Load cache from file"""
-    if CACHE_FILE.exists():
-        with open(CACHE_FILE, "r") as f:
-            return json.load(f)
-    return {}
-
-
-def save_geocode_cache(cache):
-    """Save cache to file"""
-    with open(CACHE_FILE, "w") as f:
-        json.dump(cache, f)
-
-
-# In-memory cache
-_GEOCODE_CACHE = load_geocode_cache()
-
-
 @st.cache_data(persist=True, show_spinner="Chargement des données de géocodage...")
 def get_country_from_gps(gps_data):
     """Get country from GPS coordinates using reverse_geocoder with Streamlit persistent cache"""

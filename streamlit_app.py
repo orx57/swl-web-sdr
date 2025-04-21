@@ -23,10 +23,6 @@ def setup_i18n(lang):
     return translation.gettext
 
 
-# Initialisation de la traduction avec la langue par défaut
-_ = setup_i18n(constants.DEFAULT_LOCALE)
-
-
 # Function to load CSV data
 def load_csv(url, filters):
     return pd.read_csv(url)
@@ -220,6 +216,15 @@ user_locale = st.context.locale or constants.DEFAULT_LOCALE
 
 # Get initial language from locale
 initial_lang = user_locale.split("-")[0]
+if initial_lang not in constants.LANGUAGES:
+    initial_lang = constants.DEFAULT_LOCALE
+
+# Create session state for language if it doesn't exist
+if "language" not in st.session_state:
+    st.session_state.language = initial_lang
+
+# Initialize translation with current language
+_ = setup_i18n(st.session_state.language)
 
 # Get time and user timezone
 tz = st.context.timezone or constants.DEFAULT_TIMEZONE
@@ -241,20 +246,20 @@ st.set_page_config(layout="wide")
 
 # Sidebar
 with st.sidebar:
-    # Language selector
+    # Language selector with pre-translated label
+    lang_label = _("🌍 Language")
     selected_lang = st.selectbox(
-        _("🌍 Language"),  # Traduction du label
+        lang_label,
         options=list(constants.LANGUAGES.keys()),
         format_func=lambda x: constants.LANGUAGES[x],
-        index=(
-            list(constants.LANGUAGES.keys()).index(initial_lang)
-            if initial_lang in constants.LANGUAGES
-            else 0
-        ),
+        index=list(constants.LANGUAGES.keys()).index(st.session_state.language),
+        key="lang_selector",
     )
 
-    # Translation setup with selected language
-    _ = setup_i18n(selected_lang)
+    # Update translation and reload if language changes
+    if selected_lang != st.session_state.language:
+        st.session_state.language = selected_lang
+        st.rerun()
 
     # Info message and other sidebar content
     st.info(

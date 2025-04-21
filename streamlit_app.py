@@ -96,7 +96,7 @@ def get_grid_locator(gps_data):
         return None
 
 
-@st.cache_data(persist=True, show_spinner="Chargement des données de géocodage...")
+@st.cache_data(persist=True, show_spinner=_("Loading geocoding data..."))
 def get_country_from_gps(gps_data):
     """Get country from GPS coordinates using reverse_geocoder with Streamlit persistent cache"""
     if not gps_data:
@@ -119,7 +119,7 @@ def get_country_from_gps(gps_data):
             return result[0].get("cc", "").upper()
 
     except Exception as e:
-        st.error(f"Erreur de géocodage: {str(e)}")
+        st.error(_("Geocoding error: {error}").format(error=str(e)))
         return None
 
     return None
@@ -134,12 +134,14 @@ def format_gps(gps_str):
         clean_coords = gps_str.strip("() ").replace(" ", "")
         lat, lon = map(float, clean_coords.split(","))
 
-        # Determine directions
-        lat_dir = "N" if lat >= 0 else "S"
-        lon_dir = "E" if lon >= 0 else "W"
+        # Ajout des traductions pour les points cardinaux
+        lat_dir = _("N") if lat >= 0 else _("S")
+        lon_dir = _("E") if lon >= 0 else _("W")
 
-        # Format with 4 decimals and directions
-        return f"{abs(lat):.4f}°{lat_dir}, {abs(lon):.4f}°{lon_dir}"
+        # Format avec traduction
+        return _("{lat:.4f}°{lat_dir}, {lon:.4f}°{lon_dir}").format(
+            lat=abs(lat), lat_dir=lat_dir, lon=abs(lon), lon_dir=lon_dir
+        )
     except Exception:
         return gps_str
 
@@ -207,7 +209,7 @@ st.set_page_config(layout="wide")
 with st.sidebar:
     # Language selector
     selected_lang = st.selectbox(
-        "🌍 Language / Langue",
+        _("🌍 Language"),  # Traduction du label
         options=list(constants.LANGUAGES.keys()),
         format_func=lambda x: constants.LANGUAGES[x],
         index=(
@@ -311,14 +313,14 @@ st.dataframe(
         ),
         "users_ratio": st.column_config.ProgressColumn(
             _("Occupation"),
-            help=_("Taux d'occupation du WebSDR"),
+            help=_("WebSDR occupation rate"),
             format="%.0f%%",
             min_value=0,
             max_value=100,
         ),
         "max_users": st.column_config.NumberColumn(
             _("Max Users"),
-            help=_("Number of maximum users"),
+            help=_("Maximum number of users"),
         ),
         "antenna": _("Antenna"),
         "status": None,

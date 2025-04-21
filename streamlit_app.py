@@ -159,6 +159,14 @@ def aggregate_devices(data_sources):
                 # Calculate grid locator and country before formatting GPS
                 device["grid"] = get_grid_locator(device.get("gps"))
                 device["country"] = get_country_from_gps(device.get("gps"))
+
+                # Calcul du ratio d'utilisation
+                users = float(device.get("users", 0))
+                max_users = float(device.get("max_users", 1))  # évite division par 0
+                device["users_ratio"] = (
+                    min((users / max_users) * 100, 100) if max_users > 0 else 0
+                )
+
                 # Format GPS coordinates after
                 if device.get("gps"):
                     device["gps"] = format_gps(device["gps"])
@@ -302,6 +310,13 @@ st.dataframe(
             _("Users"),
             help=_("Number of active users"),
         ),
+        "users_ratio": st.column_config.ProgressColumn(
+            _("Occupation"),
+            help=_("Taux d'occupation du WebSDR"),
+            format="%.0f%%",
+            min_value=0,
+            max_value=100,
+        ),
         "max_users": st.column_config.NumberColumn(
             _("Max Users"),
             help=_("Number of maximum users"),
@@ -329,6 +344,7 @@ st.dataframe(
         "source",
         "snr",
         "users",
+        "users_ratio",
         "max_users",
         "uptime",
         "status",

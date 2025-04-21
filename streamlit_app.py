@@ -147,7 +147,7 @@ user_locale = st.context.locale or constants.DEFAULT_LOCALE
 initial_lang = user_locale.split("-")[0]
 
 # Get time and user timezone
-tz = st.context.timezone
+tz = st.context.timezone or constants.DEFAULT_TIMEZONE
 tz_obj = pytz.timezone(tz)
 now = datetime.now(timezone.utc)
 

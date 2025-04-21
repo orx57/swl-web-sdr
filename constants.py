@@ -1,7 +1,7 @@
 """Constants required for application"""
 
 author = "F5703SWL - Olivier"
-version = "2025.16.7"
+version = "2025.17.1"
 
 # KiwiSDR Public Device List (Refresh every 15 minutes)
 KIWISDR_JSON_URL = (
@@ -28,3 +28,11 @@ data_sources = {
         "url": WEB888_JSON_URL,
     },
 }
+
+# Available languages
+LANGUAGES = {
+    "fr": "Français",
+    "en": "English"
+}
+
+DEFAULT_LOCALE = "fr-FR"

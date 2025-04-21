@@ -140,14 +140,11 @@ loading_functions = {
     "json": load_json,
 }
 
-# Retrieve the user's browser language
-user_locale = st.context.locale  # For example, "fr-FR" or "en-US"
+# Retrieve the user's browser language with fallback
+user_locale = st.context.locale or constants.DEFAULT_LOCALE
 
-# Extract the primary language (e.g., "fr" or "en")
-lang = user_locale.split("-")[0]  # Take the first part before the hyphen
-
-# Translation setup
-_ = setup_i18n(lang)  # _ is the convention for the translation function
+# Get initial language from locale
+initial_lang = user_locale.split("-")[0]
 
 # Get time and user timezone
 tz = st.context.timezone
@@ -169,8 +166,18 @@ st.set_page_config(layout="wide")
 
 # Sidebar
 with st.sidebar:
-
-    # Author information message
+    # Language selector
+    selected_lang = st.selectbox(
+        "🌍 Language / Langue",
+        options=list(constants.LANGUAGES.keys()),
+        format_func=lambda x: constants.LANGUAGES[x],
+        index=list(constants.LANGUAGES.keys()).index(initial_lang) if initial_lang in constants.LANGUAGES else 0
+    )
+    
+    # Translation setup with selected language
+    _ = setup_i18n(selected_lang)
+    
+    # Info message and other sidebar content
     st.info(
         _(
             """The application is evolving...
@@ -179,8 +186,8 @@ with st.sidebar:
         ),
         icon="ℹ️",
     )
-
-    # User context information
+    
+    # Update user context information with selected language
     st.caption(
         _(
             """Language: {lang}  
@@ -190,8 +197,8 @@ with st.sidebar:
         UTC time: {now_utc}
         """
         ).format(
-            lang=lang,
-            user_locale=user_locale,
+            lang=selected_lang,
+            user_locale=user_locale,  # Affichage direct de la locale utilisateur
             now_local=now.astimezone(tz_obj),
             tz=tz,
             now_utc=now,

@@ -72,13 +72,13 @@ def get_grid_locator(gps_data):
     if not gps_data:
         return None
     try:
-        # Si c'est une string, on essaie plusieurs formats
+        # If it's a string, try different formats
         if isinstance(gps_data, str):
-            # Nettoyer la chaîne des parenthèses et espaces
+            # Clean the string from parentheses and spaces
             clean_coords = gps_data.strip("() ").replace(" ", "")
-            # Format "(lat, lon)" ou "lat,lon"
+            # Format "(lat, lon)" or "lat,lon"
             lat, lon = map(float, clean_coords.split(","))
-        # Si c'est déjà un dict/list avec lat/lon
+        # If it's already a dict/list with lat/lon
         elif isinstance(gps_data, (dict, list)):
             if isinstance(gps_data, dict):
                 lat = float(gps_data.get("lat", gps_data.get("latitude")))
@@ -86,7 +86,7 @@ def get_grid_locator(gps_data):
             else:
                 lat, lon = map(float, gps_data[:2])
 
-        # Obtenir le code Maidenhead et les coordonnées du centre
+        # Get Maidenhead code and center coordinates
         grid_code = maidenhead.toMaiden(lat, lon, 3)
         grid_center = maidenhead.maidenGrid(grid_code)
         return grid_code
@@ -100,34 +100,34 @@ def format_gps(gps_str):
     if not gps_str:
         return None
     try:
-        # Nettoyer la chaîne des parenthèses et espaces
+        # Clean the string from parentheses and spaces
         clean_coords = gps_str.strip("() ").replace(" ", "")
         lat, lon = map(float, clean_coords.split(","))
 
-        # Déterminer les directions
+        # Determine directions
         lat_dir = "N" if lat >= 0 else "S"
         lon_dir = "E" if lon >= 0 else "W"
 
-        # Formater avec 4 décimales et les directions
+        # Format with 4 decimals and directions
         return f"{abs(lat):.4f}°{lat_dir}, {abs(lon):.4f}°{lon_dir}"
     except Exception:
         return gps_str
 
 
-# Agrégation générique des données de toutes les sources
+# Generic aggregation of data from all sources
 def aggregate_devices(data_sources):
     all_devices = []
     for source_name, source_data in data_sources.items():
         if source_data and "devices" in source_data:
-            # Dédupliquer les appareils de cette source
+            # Deduplicate devices from this source
             devices = deduplicate_devices(source_data["devices"])
-            # Utiliser le nom défini dans constants.py plutôt que la clé
+            # Use the name defined in constants.py instead of the key
             source_display_name = constants.data_sources[source_name]["name"]
             for device in devices:
                 device["source"] = source_display_name
-                # Calculer le grid locator avant de formater les GPS
+                # Calculate grid locator before formatting GPS
                 device["grid"] = get_grid_locator(device.get("gps"))
-                # Formater les coordonnées GPS après
+                # Format GPS coordinates after
                 if device.get("gps"):
                     device["gps"] = format_gps(device["gps"])
             all_devices.extend(devices)
@@ -171,12 +171,16 @@ with st.sidebar:
         "🌍 Language / Langue",
         options=list(constants.LANGUAGES.keys()),
         format_func=lambda x: constants.LANGUAGES[x],
-        index=list(constants.LANGUAGES.keys()).index(initial_lang) if initial_lang in constants.LANGUAGES else 0
+        index=(
+            list(constants.LANGUAGES.keys()).index(initial_lang)
+            if initial_lang in constants.LANGUAGES
+            else 0
+        ),
     )
-    
+
     # Translation setup with selected language
     _ = setup_i18n(selected_lang)
-    
+
     # Info message and other sidebar content
     st.info(
         _(
@@ -186,7 +190,7 @@ with st.sidebar:
         ),
         icon="ℹ️",
     )
-    
+
     # Update user context information with selected language
     st.caption(
         _(
@@ -198,7 +202,7 @@ with st.sidebar:
         """
         ).format(
             lang=selected_lang,
-            user_locale=user_locale,  # Affichage direct de la locale utilisateur
+            user_locale=user_locale,
             now_local=now.astimezone(tz_obj),
             tz=tz,
             now_utc=now,
@@ -215,18 +219,18 @@ st.header(_("List of Active Public WebSDRs"))
 # Display metrics for the number of SDRs and users
 active_sdr, active_user, total_sdr = st.columns(3)
 
-# Obtenir tous les appareils
+# Get all devices
 combined_devices = aggregate_devices(data)
 
-# Filtrer les appareils actifs
+# Filter active devices
 active_devices = [
     device for device in combined_devices if device.get("status") == "active"
 ]
 
-# Calcul des métriques sur les appareils actifs uniquement
+# Calculate metrics only for active devices
 total_active = len(active_devices)
 total_users = sum(int(device.get("users", 0)) for device in active_devices)
-total_sdrs = len(combined_devices)  # Garde le total de tous les appareils
+total_sdrs = len(combined_devices)  # Keep total of all devices
 
 active_sdr.metric(
     _("Active SDRs"),

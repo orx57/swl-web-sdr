@@ -35,6 +35,6 @@ LANGUAGES = {
     "en": "English"
 }
 
-DEFAULT_LOCALE = "fr-FR"
+DEFAULT_LOCALE = "en-US"
 
 DEFAULT_TIMEZONE = "UTC"

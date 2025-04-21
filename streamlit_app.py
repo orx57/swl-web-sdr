@@ -1,5 +1,6 @@
 import gettext
 import json
+import random
 from datetime import datetime, timezone
 from zoneinfo import ZoneInfo
 
@@ -10,6 +11,20 @@ import streamlit as st
 from vgrid.utils import maidenhead
 
 import constants
+
+
+# Configuration initiale de gettext avec la langue par défaut
+def setup_i18n(lang):
+    localedir = "locales"
+    translation = gettext.translation(
+        "messages", localedir, languages=[lang], fallback=True
+    )
+    translation.install()
+    return translation.gettext
+
+
+# Initialisation de la traduction avec la langue par défaut
+_ = setup_i18n(constants.DEFAULT_LOCALE)
 
 
 # Function to load CSV data
@@ -175,6 +190,18 @@ def aggregate_devices(data_sources):
     return all_devices
 
 
+def get_random_available_sdr(devices):
+    """Sélectionne au hasard un WebSDR actif avec de la place disponible"""
+    available_devices = [
+        device
+        for device in devices
+        if device.get("status") == "active"
+        and device.get("users_ratio", 100) < 100
+        and device.get("url")
+    ]
+    return random.choice(available_devices) if available_devices else None
+
+
 # Dictionary of loading functions
 loading_functions = {
     "csv": load_csv,
@@ -258,7 +285,7 @@ st.header(_("List of Active Public WebSDRs"))
 # st.json(data, expanded=False)
 
 # Display metrics for the number of SDRs and users
-active_sdr, active_user, total_sdr = st.columns(3)
+active_sdr, active_user, total_sdr, lucky_button = st.columns([1, 1, 1, 1])
 
 # Get all devices
 combined_devices = aggregate_devices(data)
@@ -284,6 +311,22 @@ active_user.metric(
     border=True,
 )
 total_sdr.metric(_("Total SDRs"), total_sdrs, border=True)
+
+# Bouton QSL Surprise dans la dernière colonne
+with lucky_button:
+    if st.button(
+        _("🎲 QSL Surprise !"),
+        help=_("Découvrez un WebSDR au hasard"),
+        use_container_width=True,
+    ):
+        lucky_sdr = get_random_available_sdr(active_devices)
+        if lucky_sdr:
+            js = f"""<script>
+                window.open('{lucky_sdr["url"]}', '_blank');
+            </script>"""
+            st.components.v1.html(js, height=0)
+        else:
+            st.warning(_("Aucun WebSDR disponible pour le moment"))
 
 # Display the list of SDRs
 st.dataframe(
@@ -339,20 +382,25 @@ st.dataframe(
         ),
     },
     column_order=(
-        "url",
+        # Informations principales
         "name",
-        "antenna",
+        "url",
         "source",
-        "snr",
+        # Statistiques d'utilisation
         "users",
         "users_ratio",
         "max_users",
-        "uptime",
-        "status",
+        # Informations techniques
+        "antenna",
         "bands",
+        "snr",
+        "uptime",
+        # Localisation
         "country",
         "grid",
         "gps",
+        # Champ caché
+        "status",
     ),
     hide_index=True,
 )

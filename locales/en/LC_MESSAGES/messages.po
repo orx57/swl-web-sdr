@@ -5,7 +5,7 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
-"POT-Creation-Date: 2025-04-18 13:15+0000\n"
+"POT-Creation-Date: 2025-04-21 18:19+0000\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -15,7 +15,39 @@ msgstr ""
 "Generated-By: pygettext.py 1.5\n"
 
 
-#: streamlit_app.py:82
+#: streamlit_app.py:114
+msgid "Loading geocoding data..."
+msgstr "Loading geocoding data..."
+
+#: streamlit_app.py:143
+msgid "Geocoding error: {error}"
+msgstr "Geocoding error: {error}"
+
+#: streamlit_app.py:159
+msgid "N"
+msgstr "N"
+
+#: streamlit_app.py:159
+msgid "S"
+msgstr "S"
+
+#: streamlit_app.py:160
+msgid "E"
+msgstr "E"
+
+#: streamlit_app.py:160
+msgid "W"
+msgstr "W"
+
+#: streamlit_app.py:163
+msgid "{lat:.4f}°{lat_dir}, {lon:.4f}°{lon_dir}"
+msgstr "{lat:.4f}°{lat_dir}, {lon:.4f}°{lon_dir}"
+
+#: streamlit_app.py:246
+msgid "🌍 Language"
+msgstr "🌍 Language"
+
+#: streamlit_app.py:261
 msgid ""
 "The application is evolving...\n"
 "        Expect exciting new features very soon!\n"
@@ -25,7 +57,7 @@ msgstr ""
 "        Expect exciting new features very soon!\n"
 "        "
 
-#: streamlit_app.py:92
+#: streamlit_app.py:271
 msgid ""
 "Language: {lang}  \n"
 "        Locale: {user_locale}  \n"
@@ -41,71 +73,155 @@ msgstr ""
 "        UTC time: {now_utc}\n"
 "        "
 
-#: streamlit_app.py:109
+#: streamlit_app.py:288
 msgid "📻 SWL Web SDR"
 msgstr "📻 SWL Web SDR"
 
-#: streamlit_app.py:111
+#: streamlit_app.py:290
 msgid "List of Active Public WebSDRs"
 msgstr "List of Active Public WebSDRs"
 
-#: streamlit_app.py:118
+#: streamlit_app.py:311
 msgid "Active SDRs"
 msgstr "Active SDRs"
 
-#: streamlit_app.py:123
+#: streamlit_app.py:316
 msgid "Active Users"
 msgstr "Active Users"
 
-#: streamlit_app.py:131
+#: streamlit_app.py:320
 msgid "Total SDRs"
 msgstr "Total SDRs"
 
-#: streamlit_app.py:137
+#: streamlit_app.py:325
+msgid "🎲 Random QSL !"
+msgstr "🎲 Random QSL !"
+
+#: streamlit_app.py:326
+msgid "Discover a random WebSDR"
+msgstr "Discover a random WebSDR"
+
+#: streamlit_app.py:336
+msgid "No WebSDR available at the moment"
+msgstr "No WebSDR available at the moment"
+
+#: streamlit_app.py:343
 msgid "URL"
 msgstr "URL"
 
-#: streamlit_app.py:138
+#: streamlit_app.py:347
 msgid "Uptime"
 msgstr "Uptime"
 
-#: streamlit_app.py:139
+#: streamlit_app.py:348
+msgid "Uptime in seconds"
+msgstr "Uptime in seconds"
+
+#: streamlit_app.py:350
 msgid "Name"
 msgstr "Name"
 
-#: streamlit_app.py:140
+#: streamlit_app.py:352
+msgid "Source"
+msgstr "Source"
+
+#: streamlit_app.py:353
+msgid "Data source origin"
+msgstr "Data source origin"
+
+#: streamlit_app.py:356
 msgid "SNR"
 msgstr "SNR"
 
-#: streamlit_app.py:141
+#: streamlit_app.py:357
+msgid "Signal-to-Noise Ratio"
+msgstr "Signal-to-Noise Ratio"
+
+#: streamlit_app.py:361
 msgid "Users"
 msgstr "Users"
 
-#: streamlit_app.py:142
+#: streamlit_app.py:362
+msgid "Number of active users"
+msgstr "Number of active users"
+
+#: streamlit_app.py:365
+msgid "Occupation"
+msgstr "Occupation"
+
+#: streamlit_app.py:366
+msgid "WebSDR occupation rate"
+msgstr "WebSDR occupation rate"
+
+#: streamlit_app.py:372
 msgid "Max Users"
 msgstr "Max Users"
 
-#: streamlit_app.py:143
+#: streamlit_app.py:373
+msgid "Maximum number of users"
+msgstr "Maximum number of users"
+
+#: streamlit_app.py:375
 msgid "Antenna"
 msgstr "Antenna"
 
-#: streamlit_app.py:144
-msgid "Status"
-msgstr "Status"
-
-#: streamlit_app.py:145
+#: streamlit_app.py:377
 msgid "Bands"
 msgstr "Bands"
 
-#: streamlit_app.py:146
+#: streamlit_app.py:379
+msgid "Grid"
+msgstr "Grid"
+
+#: streamlit_app.py:380
+msgid "Maidenhead Grid Locator"
+msgstr "Maidenhead Grid Locator"
+
+#: streamlit_app.py:383
+msgid "Country Code"
+msgstr "Country Code"
+
+#: streamlit_app.py:384
+msgid "Country code (ISO)"
+msgstr "Country code (ISO)"
+
+#: streamlit_app.py:387
+msgid "City"
+msgstr "City"
+
+#: streamlit_app.py:388
+msgid "City name"
+msgstr "City name"
+
+#: streamlit_app.py:391
+msgid "Region"
+msgstr "Region"
+
+#: streamlit_app.py:392
+msgid "State/Region/Province"
+msgstr "State/Region/Province"
+
+#: streamlit_app.py:395
+msgid "District"
+msgstr "District"
+
+#: streamlit_app.py:396
+msgid "District/Department/County"
+msgstr "District/Department/County"
+
+#: streamlit_app.py:399
 msgid "GPS"
 msgstr "GPS"
 
-#: streamlit_app.py:152
+#: streamlit_app.py:400
+msgid "GPS coordinates"
+msgstr "GPS coordinates"
+
+#: streamlit_app.py:431
 msgid "About the Application"
 msgstr "About the Application"
 
-#: streamlit_app.py:155
+#: streamlit_app.py:434
 msgid ""
 "This application displays **public data from active WebSDRs**\n"
 "    using different APIs and data sources.\n"
@@ -115,6 +231,7 @@ msgstr ""
 "    using different APIs and data sources.\n"
 "    "
 
-#: streamlit_app.py:163
+#: streamlit_app.py:442
 msgid "Author: {author} · Version: {version}"
 msgstr "Author: {author} · Version: {version}"
+

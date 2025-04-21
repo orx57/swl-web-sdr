@@ -322,8 +322,8 @@ total_sdr.metric(_("Total SDRs"), total_sdrs, border=True)
 # Bouton QSL Surprise dans la dernière colonne
 with lucky_button:
     if st.button(
-        _("🎲 QSL Surprise !"),
-        help=_("Découvrez un WebSDR au hasard"),
+        _("🎲 Random QSL !"),
+        help=_("Discover a random WebSDR"),
         use_container_width=True,
     ):
         lucky_sdr = get_random_available_sdr(active_devices)
@@ -333,7 +333,7 @@ with lucky_button:
             </script>"""
             st.components.v1.html(js, height=0)
         else:
-            st.warning(_("Aucun WebSDR disponible pour le moment"))
+            st.warning(_("No WebSDR available at the moment"))
 
 # Display the list of SDRs
 st.dataframe(

@@ -1,10 +1,12 @@
 import gettext
 import json
 from datetime import datetime, timezone
+from pathlib import Path
+from zoneinfo import ZoneInfo
 
 import pandas as pd
-import pytz
 import requests
+import reverse_geocoder as rg
 import streamlit as st
 from vgrid.utils import maidenhead
 
@@ -95,6 +97,57 @@ def get_grid_locator(gps_data):
         return None
 
 
+# Persistent cache definition
+CACHE_FILE = Path("geocode_cache.json")
+
+
+def load_geocode_cache():
+    """Load cache from file"""
+    if CACHE_FILE.exists():
+        with open(CACHE_FILE, "r") as f:
+            return json.load(f)
+    return {}
+
+
+def save_geocode_cache(cache):
+    """Save cache to file"""
+    with open(CACHE_FILE, "w") as f:
+        json.dump(cache, f)
+
+
+# In-memory cache
+_GEOCODE_CACHE = load_geocode_cache()
+
+
+@st.cache_data(persist=True, show_spinner="Chargement des données de géocodage...")
+def get_country_from_gps(gps_data):
+    """Get country from GPS coordinates using reverse_geocoder with Streamlit persistent cache"""
+    if not gps_data:
+        return None
+    try:
+        # Parse coordinates
+        if isinstance(gps_data, str):
+            clean_coords = gps_data.strip("() ").replace(" ", "")
+            lat, lon = map(float, clean_coords.split(","))
+        elif isinstance(gps_data, (dict, list)):
+            if isinstance(gps_data, dict):
+                lat = float(gps_data.get("lat", gps_data.get("latitude")))
+                lon = float(gps_data.get("lon", gps_data.get("longitude")))
+            else:
+                lat, lon = map(float, gps_data[:2])
+
+        # Utilise reverse_geocoder avec les coordonnées arrondies
+        result = rg.search((round(lat, 4), round(lon, 4)))
+        if result and len(result) > 0:
+            return result[0].get("cc", "").upper()
+
+    except Exception as e:
+        st.error(f"Erreur de géocodage: {str(e)}")
+        return None
+
+    return None
+
+
 def format_gps(gps_str):
     """Format GPS coordinates in a human readable format: 48.8567°N, 2.3508°E"""
     if not gps_str:
@@ -125,8 +178,9 @@ def aggregate_devices(data_sources):
             source_display_name = constants.data_sources[source_name]["name"]
             for device in devices:
                 device["source"] = source_display_name
-                # Calculate grid locator before formatting GPS
+                # Calculate grid locator and country before formatting GPS
                 device["grid"] = get_grid_locator(device.get("gps"))
+                device["country"] = get_country_from_gps(device.get("gps"))
                 # Format GPS coordinates after
                 if device.get("gps"):
                     device["gps"] = format_gps(device["gps"])
@@ -148,7 +202,7 @@ initial_lang = user_locale.split("-")[0]
 
 # Get time and user timezone
 tz = st.context.timezone or constants.DEFAULT_TIMEZONE
-tz_obj = pytz.timezone(tz)
+tz_obj = ZoneInfo(tz)
 now = datetime.now(timezone.utc)
 
 # Load the data sources from constants
@@ -277,13 +331,17 @@ st.dataframe(
         "antenna": _("Antenna"),
         "status": None,
         "bands": _("Bands"),
-        "gps": st.column_config.TextColumn(
-            _("GPS"),
-            help=_("GPS coordinates"),
-        ),
         "grid": st.column_config.TextColumn(
             _("Grid"),
             help=_("Maidenhead Grid Locator"),
+        ),
+        "country": st.column_config.TextColumn(
+            _("Country"),
+            help=_("Country code"),
+        ),
+        "gps": st.column_config.TextColumn(
+            _("GPS"),
+            help=_("GPS coordinates"),
         ),
     },
     column_order=(
@@ -297,8 +355,9 @@ st.dataframe(
         "uptime",
         "status",
         "bands",
-        "gps",
+        "country",
         "grid",
+        "gps",
     ),
     hide_index=True,
 )

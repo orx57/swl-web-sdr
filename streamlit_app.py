@@ -174,7 +174,11 @@ def aggregate_devices(data_sources):
                 device["grid"] = get_grid_locator(device.get("gps"))
 
                 # Convert bands to MHz format
-                if "bands" in device and isinstance(device["bands"], str) and "-" in device["bands"]:
+                if (
+                    "bands" in device
+                    and isinstance(device["bands"], str)
+                    and "-" in device["bands"]
+                ):
                     try:
                         start, end = map(float, device["bands"].split("-"))
                         device["bands"] = f"{start / 1e6:.2f}-{end / 1e6:.2f} MHz"

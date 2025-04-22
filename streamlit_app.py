@@ -173,6 +173,14 @@ def aggregate_devices(data_sources):
                 device["source"] = source_display_name
                 device["grid"] = get_grid_locator(device.get("gps"))
 
+                # Convert bands to MHz format
+                if "bands" in device and isinstance(device["bands"], str) and "-" in device["bands"]:
+                    try:
+                        start, end = map(float, device["bands"].split("-"))
+                        device["bands"] = f"{start / 1e6:.2f}-{end / 1e6:.2f} MHz"
+                    except ValueError:
+                        pass  # Keep the original value if conversion fails
+
                 # Récupération des infos de géolocalisation enrichies
                 location = get_country_from_gps(device.get("gps"))
                 if location:
@@ -378,7 +386,10 @@ st.dataframe(
         ),
         "antenna": _("Antenna"),
         "status": None,
-        "bands": _("Bands"),
+        "bands": st.column_config.TextColumn(
+            _("Bands"),
+            help=_("Frequency range in MHz"),
+        ),
         "grid": st.column_config.TextColumn(
             _("Grid"),
             help=_("Maidenhead Grid Locator"),

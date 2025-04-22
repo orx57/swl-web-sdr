@@ -132,7 +132,6 @@ def get_country_from_gps(gps_data):
                 "country_code": location.get("cc", "").upper(),
                 "city": location.get("name", ""),
                 "region": location.get("admin1", ""),
-                "district": location.get("admin2", ""),  # département, county, etc.
             }
 
     except Exception as e:
@@ -396,10 +395,6 @@ st.dataframe(
             _("Region"),
             help=_("State/Region/Province"),
         ),
-        "district": st.column_config.TextColumn(
-            _("District"),
-            help=_("District/Department/County"),
-        ),
         "gps": st.column_config.TextColumn(
             _("GPS"),
             help=_("GPS coordinates"),
@@ -423,7 +418,6 @@ st.dataframe(
         "country_code",
         "city",
         "region",
-        "district",
         "grid",
         "gps",
         # Champ caché

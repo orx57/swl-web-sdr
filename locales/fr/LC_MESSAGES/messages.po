@@ -201,14 +201,6 @@ msgstr "Région"
 msgid "State/Region/Province"
 msgstr "État/Région/Province"
 
-#: streamlit_app.py:395
-msgid "District"
-msgstr "District"
-
-#: streamlit_app.py:396
-msgid "District/Department/County"
-msgstr "District/Département/Comté"
-
 #: streamlit_app.py:399
 msgid "GPS"
 msgstr "GPS"

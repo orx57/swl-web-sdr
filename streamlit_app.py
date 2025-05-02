@@ -107,7 +107,7 @@ def get_grid_locator(gps_data):
         return None
 
 
-@st.cache_data(persist=True, show_spinner=_("Loading geocoding data..."))
+@st.cache_data(persist=True, show_spinner="Loading geocoding data...")
 def get_country_from_gps(gps_data):
     """Get location details from GPS coordinates using reverse_geocoder with Streamlit persistent cache"""
     if not gps_data:

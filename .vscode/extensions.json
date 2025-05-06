@@ -1,0 +1,11 @@
+{
+    "recommendations": [
+        "DavidAnson.vscode-markdownlint",
+        "Gruntfuggly.todo-tree",
+        "ms-python.black-formatter",
+        "ms-python.isort",
+        "ms-python.python",
+        "ms-python.vscode-pylance",
+        "StevenChen.vscode-adr-manager"
+    ]
+}

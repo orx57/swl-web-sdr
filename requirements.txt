@@ -1,11 +1,15 @@
-# Main dependencies
-streamlit==1.44.1
-vgrid==1.3.2
-reverse-geocoder==1.5.1
+# Main requirements
+streamlit == 1.44.*
+reverse-geocoder == 1.5.*
+vgrid == 1.3.*
 
 # User interface
-#pandas>=2.2.0
+#pandas == 2.2.*
 
 # Utilities
-#requests>=2.31.0
-#python-gettext>=5.0
+#python-gettext >= 5.0
+#requests == 2.31.*
+
+# Development requirements
+#black
+#isort

@@ -10,7 +10,7 @@ import reverse_geocoder as rg
 import streamlit as st
 from vgrid.utils import maidenhead
 
-import constants
+import config
 
 
 # Configuration initiale de gettext avec la langue par défaut
@@ -168,7 +168,7 @@ def aggregate_devices(data_sources):
     for source_name, source_data in data_sources.items():
         if source_data and "devices" in source_data:
             devices = deduplicate_devices(source_data["devices"])
-            source_display_name = constants.data_sources[source_name]["name"]
+            source_display_name = config.data_sources[source_name]["name"]
             for device in devices:
                 device["source"] = source_display_name
                 device["grid"] = get_grid_locator(device.get("gps"))
@@ -223,12 +223,12 @@ loading_functions = {
 }
 
 # Retrieve the user's browser language with fallback
-user_locale = st.context.locale or constants.DEFAULT_LOCALE
+user_locale = st.context.locale or config.DEFAULT_LOCALE
 
 # Get initial language from locale
 initial_lang = user_locale.split("-")[0]
-if initial_lang not in constants.LANGUAGES:
-    initial_lang = constants.DEFAULT_LOCALE
+if initial_lang not in config.LANGUAGES:
+    initial_lang = config.DEFAULT_LOCALE
 
 # Create session state for language if it doesn't exist
 if "language" not in st.session_state:
@@ -238,7 +238,7 @@ if "language" not in st.session_state:
 _ = setup_i18n(st.session_state.language)
 
 # Get time and user timezone
-tz = st.context.timezone or constants.DEFAULT_TIMEZONE
+tz = st.context.timezone or config.DEFAULT_TIMEZONE
 tz_obj = ZoneInfo(tz)
 now = datetime.now(timezone.utc)
 
@@ -247,7 +247,7 @@ data = {
     name: load_data(
         params["url"], params["data_type"], params.get("load"), params.get("filters")
     )
-    for name, params in constants.data_sources.items()
+    for name, params in config.data_sources.items()
 }
 
 # Main application
@@ -261,9 +261,9 @@ with st.sidebar:
     lang_label = _("🌍 Language")
     selected_lang = st.selectbox(
         lang_label,
-        options=list(constants.LANGUAGES.keys()),
-        format_func=lambda x: constants.LANGUAGES[x],
-        index=list(constants.LANGUAGES.keys()).index(st.session_state.language),
+        options=list(config.LANGUAGES.keys()),
+        format_func=lambda x: config.LANGUAGES[x],
+        index=list(config.LANGUAGES.keys()).index(st.session_state.language),
         key="lang_selector",
     )
 
@@ -454,6 +454,6 @@ st.markdown(
 
 st.caption(
     _("Author: {author} · Version: {version}").format(
-        author=constants.author, version=constants.version
+        author=config.author, version=config.version
     )
 )

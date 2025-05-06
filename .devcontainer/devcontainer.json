@@ -6,22 +6,25 @@
     "codespaces": {
       "openFiles": [
         "README.md",
-        "streamlit_app.py"
+        "swl_web_sdr.py"
       ]
     },
     "vscode": {
       "settings": {},
       "extensions": [
+        "DavidAnson.vscode-markdownlint",
+        "Gruntfuggly.todo-tree",
+        "ms-python.black-formatter",
+        "ms-python.isort",
         "ms-python.python",
         "ms-python.vscode-pylance",
-        "ms-python.black-formatter",
-        "ms-python.isort"
+        "StevenChen.vscode-adr-manager"
       ]
     }
   },
   "updateContentCommand": "[ -f packages.txt ] && sudo apt update && sudo apt upgrade -y && sudo xargs apt install -y <packages.txt; [ -f requirements.txt ] && pip3 install --user -r requirements.txt; pip3 install --user streamlit; echo '✅ Packages installed and Requirements met'",
   "postAttachCommand": {
-    "server": "streamlit run streamlit_app.py --server.enableCORS false --server.enableXsrfProtection false"
+    "server": "streamlit run swl_web_sdr.py --server.enableCORS false --server.enableXsrfProtection false"
   },
   "portsAttributes": {
     "8501": {

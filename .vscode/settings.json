@@ -1,13 +1,49 @@
 {
+    "files.autoSave": "afterDelay",
+    "files.watcherExclude": {
+        "**/.git/**": true
+    },
+    "git.autofetch": true,
     "isort.args": [
         "--profile",
         "black"
     ],
+    "todo-tree.general.tags": [
+        "[ ]",
+        "[x]",
+        "BUG",
+        "FIXME",
+        "HACK",
+        "IDEA",
+        "NOTE",
+        "TODO",
+        "WTF",
+        "XXX",
+    ],
+    "todo-tree.highlights.customHighlight": {
+        "[ ]": {
+        "background": "#ff000080"
+        },
+        "[x]": {
+        "background": "#00ff0080"
+        }
+    },
+    "todo-tree.highlights.useColourScheme": true,
+    "vscode-yaml-sort.sortArrays": false,
+    "vscode-yaml-sort.sortOnSave": 0,
+    "[json]": {
+        "editor.defaultFormatter": "vscode.json-language-features",
+        "editor.formatOnSave": true,
+    },
     "[python]": {
         "editor.defaultFormatter": "ms-python.black-formatter",
         "editor.codeActionsOnSave": {
             "source.organizeImports": "explicit"
         },
+        "editor.formatOnSave": true,
+    },
+    "[yaml]": {
+        "editor.defaultFormatter": "redhat.vscode-yaml",
         "editor.formatOnSave": true,
     },
 }

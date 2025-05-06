@@ -29,8 +29,6 @@
         }
     },
     "todo-tree.highlights.useColourScheme": true,
-    "vscode-yaml-sort.sortArrays": false,
-    "vscode-yaml-sort.sortOnSave": 0,
     "[json]": {
         "editor.defaultFormatter": "vscode.json-language-features",
         "editor.formatOnSave": true,

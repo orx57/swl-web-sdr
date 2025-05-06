@@ -1,10 +1,10 @@
 #  `gettext` Notes
 
 ```shell
-mkdir -p locales/{en,fr}/LC_MESSAGES
-pygettext3 -p locales streamlit_app.py
-cp locales/messages.pot locales/en/LC_MESSAGES/messages.po
-cp locales/messages.pot locales/fr/LC_MESSAGES/messages.po
-msgfmt -o locales/en/LC_MESSAGES/messages.mo locales/en/LC_MESSAGES/messages.po
-msgfmt -o locales/fr/LC_MESSAGES/messages.mo locales/fr/LC_MESSAGES/messages.po
+mkdir -p assets/locales/{en,fr}/LC_MESSAGES
+pygettext3 -p assets/locales/ streamlit_app.py
+cp assets/locales/messages.pot assets/locales/en/LC_MESSAGES/messages.po
+cp assets/locales/messages.pot assets/locales/fr/LC_MESSAGES/messages.po
+msgfmt -o assets/locales/en/LC_MESSAGES/messages.mo assets/locales/en/LC_MESSAGES/messages.po
+msgfmt -o assets/locales/fr/LC_MESSAGES/messages.mo assets/locales/fr/LC_MESSAGES/messages.po
 ```

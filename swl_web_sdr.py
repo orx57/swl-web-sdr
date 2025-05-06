@@ -15,7 +15,7 @@ import config
 
 # Configuration initiale de gettext avec la langue par défaut
 def setup_i18n(lang):
-    localedir = "locales"
+    localedir = "assets/locales"
     translation = gettext.translation(
         "messages", localedir, languages=[lang], fallback=True
     )
@@ -56,7 +56,7 @@ def load_data(url, data_type, load=False, filters=None):
 
 # Configuration for gettext
 def setup_i18n(lang):
-    localedir = "locales"  # Folder containing translations
+    localedir = "assets/locales"  # Folder containing translations
     translation = gettext.translation(
         "messages", localedir, languages=[lang], fallback=True
     )

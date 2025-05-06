@@ -6,7 +6,7 @@ including API URLs, data sources and localization settings.
 
 # Application information
 author = "F5703SWL - Olivier"  # Application author
-version = "2025.17.2"  # Format: YYYY.ww.D (Year.Week.WeekDay)
+version = "2025.19.2"  # Format: YYYY.ww.D (Year.Week.WeekDay)
 
 # API URLs
 # KiwiSDR Public Device List (Refreshed every 15 minutes)

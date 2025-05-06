@@ -50,18 +50,18 @@ msgstr ""
 #: streamlit_app.py:261
 msgid ""
 "The application is evolving...\n"
-"        Expect exciting new features very soon!\n"
-"        "
+"            Expect exciting new features very soon!\n"
+"            "
 msgstr ""
 
 #: streamlit_app.py:271
 msgid ""
 "Language: {lang}  \n"
-"        Locale: {user_locale}  \n"
-"        Time: {now_local}  \n"
-"        Timezone: {tz}  \n"
-"        UTC time: {now_utc}\n"
-"        "
+"            Locale: {user_locale}  \n"
+"            Time: {now_local}  \n"
+"            Timezone: {tz}  \n"
+"            UTC time: {now_utc}\n"
+"            "
 msgstr ""
 
 #: streamlit_app.py:288
@@ -207,8 +207,8 @@ msgstr ""
 #: streamlit_app.py:434
 msgid ""
 "This application displays **public data from active WebSDRs**\n"
-"    using different APIs and data sources.\n"
-"    "
+"        using different APIs and data sources.\n"
+"        "
 msgstr ""
 
 #: streamlit_app.py:442

@@ -5,7 +5,7 @@ import pandas as pd
 import requests
 import reverse_geocoder as rg
 import streamlit as st
-from vgrid.utils import maidenhead
+from vgrid.conversion.latlon2dggs import latlon2maidenhead
 
 import config
 
@@ -77,7 +77,7 @@ def get_grid_locator(gps_data):
                 lat, lon = map(float, gps_data[:2])
 
         # Get Maidenhead code
-        grid_code = maidenhead.toMaiden(lat, lon, 3)
+        grid_code = latlon2maidenhead(lat, lon, 3)
         return grid_code
 
     except Exception:

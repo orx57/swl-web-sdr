@@ -1,7 +1,7 @@
 # Main requirements
-streamlit == 1.44.*
+streamlit == 1.49.*
 reverse-geocoder == 1.5.*
-vgrid == 1.3.*
+vgrid == 1.4.*
 
 # User interface
 #pandas == 2.2.*
